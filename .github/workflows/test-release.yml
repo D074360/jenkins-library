@@ -1,0 +1,63 @@
+name: Test Archive Creation and Publishing
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Run in test mode (true/false)'
+        required: true
+        default: 'true'
+
+jobs:
+  test-build:
+    name: Test Archive Creation and Publishing
+    runs-on: ubuntu-latest
+    env:
+      TEST_MODE: ${{ github.event.inputs.test_mode }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prepare files for archiving
+        run: |
+          mkdir -p ${{ github.workspace }}/temp_dir
+          rsync -a --exclude='README.md' --exclude='CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' ./ ${{ github.workspace }}/temp_dir/
+          echo "Prepared files for archiving."
+
+      - name: Create custom release ZIP
+        run: |
+          cd ${{ github.workspace }}/temp_dir
+          zip -r ../custom-test-archive.zip .
+          echo "Created ZIP file: custom-test-archive.zip"
+
+      - name: Create custom release tar.gz
+        run: |
+          cd ${{ github.workspace }}/temp_dir
+          tar -czvf ../custom-test-archive.tar.gz .
+          echo "Created tar.gz file: custom-test-archive.tar.gz"
+
+      - name: Simulate or Publish custom release ZIP
+        if: ${{ env.TEST_MODE == 'false' }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url || 'https://api.github.com/repos/:owner/:repo/releases/assets{?name,label}' }}
+          asset_path: ${{ github.workspace }}/custom-test-archive.zip
+          asset_name: custom-test-archive.zip
+          asset_content_type: application/zip
+
+      - name: Simulate Publish custom release ZIP (Test Mode)
+        if: ${{ env.TEST_MODE == 'true' }}
+        run: echo "Simulating publishing custom release ZIP: ${{ github.workspace }}/custom-test-archive.zip"
+
+      - name: Simulate or Publish custom release tar.gz
+        if: ${{ env.TEST_MODE == 'false' }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url || 'https://api.github.com/repos/:owner/:repo/releases/assets{?name,label}' }}
+          asset_path: ${{ github.workspace }}/custom-test-archive.tar.gz
+          asset_name: custom-test-archive.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Simulate Publish custom release tar.gz (Test Mode)
+        if: ${{ env.TEST_MODE == 'true' }}
+        run: echo "Simulating publishing custom release tar.gz: ${{ github.workspace }}/custom-test-archive.tar.gz"
