@@ -63,5 +63,5 @@ jobs:
 
       - name: Simulate Publish custom release tar.gz (Test Mode)
         if: ${{ env.TEST_MODE == 'true' }}
-        run: |
-         echo "Simulating publishing custom release tar.gz: ${{ github.workspace }}/custom-test-archive.tar.gz"
+        run: | 
+          echo "Simulating publishing custom release tar.gz: ${{ github.workspace }}/custom-test-archive.tar.gz"
