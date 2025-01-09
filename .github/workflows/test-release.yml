@@ -45,10 +45,6 @@ jobs:
           asset_name: custom-test-archive.zip
           asset_content_type: application/zip
 
-      - name: Simulate Publish custom release ZIP (Test Mode)
-        if: ${{ env.TEST_MODE == 'true' }}
-        run: echo "Simulating publishing custom release ZIP: ${{ github.workspace }}/custom-test-archive.zip"
-
       - name: Simulate or Publish custom release tar.gz
         if: ${{ env.TEST_MODE == 'false' }}
         uses: actions/upload-release-asset@v1
@@ -57,7 +53,3 @@ jobs:
           asset_path: ${{ github.workspace }}/custom-test-archive.tar.gz
           asset_name: custom-test-archive.tar.gz
           asset_content_type: application/gzip
-
-      - name: Simulate Publish custom release tar.gz (Test Mode)
-        if: ${{ env.TEST_MODE == 'true' }}
-        run: echo "Simulating publishing custom release tar.gz: ${{ github.workspace }}/custom-test-archive.tar.gz"
