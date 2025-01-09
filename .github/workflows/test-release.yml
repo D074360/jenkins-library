@@ -18,6 +18,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check disk space
+        run: df -h
+
+      - name: List current files and directories
+        run: ls -alh
+
       - name: Create custom release ZIP with exclusions
         run: |
           zip -r custom-test-archive.zip . -x "README.md" "CONTRIBUTING.md" ".git/*" ".github/workflows/*"
@@ -27,6 +33,9 @@ jobs:
         run: |
           tar --verbose --exclude='./README.md' --exclude='./CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' -czvf custom-test-archive.tar.gz .
           echo "Created tar.gz file: custom-test-archive.tar.gz"
+
+      - name: Show created files and sizes
+        run: ls -lh custom-test-archive.*
 
       - name: Simulate or Publish custom release ZIP
         if: ${{ env.TEST_MODE == 'false' }}
