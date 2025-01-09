@@ -25,7 +25,7 @@ jobs:
 
       - name: Create custom release tar.gz with exclusions
         run: |
-          tar --exclude='./README.md' --exclude='./CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' -czvf custom-test-archive.tar.gz .
+          tar --verbose --exclude='./README.md' --exclude='./CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' -czvf custom-test-archive.tar.gz .
           echo "Created tar.gz file: custom-test-archive.tar.gz"
 
       - name: Simulate or Publish custom release ZIP
