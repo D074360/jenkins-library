@@ -18,24 +18,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Prepare files for archiving
+      - name: Create custom release ZIP with exclusions
         run: |
-          mkdir -p ${{ github.workspace }}/temp_dir
-          rsync -av --ignore-missing-args --exclude='README.md' --exclude='CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' ./ ${{ github.workspace }}/temp_dir/
-          echo "Prepared files for archiving."
-        env:
-          RSYNC_RSH: ssh
-
-      - name: Create custom release ZIP
-        run: |
-          cd ${{ github.workspace }}/temp_dir
-          zip -r ../custom-test-archive.zip .
+          zip -r custom-test-archive.zip . -x "README.md" "CONTRIBUTING.md" ".git/*" ".github/workflows/*"
           echo "Created ZIP file: custom-test-archive.zip"
 
-      - name: Create custom release tar.gz
+      - name: Create custom release tar.gz with exclusions
         run: |
-          cd ${{ github.workspace }}/temp_dir
-          tar -czvf ../custom-test-archive.tar.gz .
+          tar --exclude='./README.md' --exclude='./CONTRIBUTING.md' --exclude='.git' --exclude='.github/workflows' -czvf custom-test-archive.tar.gz .
           echo "Created tar.gz file: custom-test-archive.tar.gz"
 
       - name: Simulate or Publish custom release ZIP
@@ -63,5 +53,5 @@ jobs:
 
       - name: Simulate Publish custom release tar.gz (Test Mode)
         if: ${{ env.TEST_MODE == 'true' }}
-        run: | 
+        run: |
           echo "Simulating publishing custom release tar.gz: ${{ github.workspace }}/custom-test-archive.tar.gz"
